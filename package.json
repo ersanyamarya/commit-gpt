@@ -15,9 +15,23 @@
     "commands": [
       {
         "command": "commit-gpt.generateCommit",
-        "title": "Generate Commit Message"
+        "title": "Commit GPT: Generate commit message"
+      },
+      {
+        "command": "commit-gpt.setOpenAIKey",
+        "title": "Commit GPT: Set OpenAI API key"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Commit GPT",
+      "properties": {
+        "commit-gpt.open-ai-key": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
