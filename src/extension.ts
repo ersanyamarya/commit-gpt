@@ -6,7 +6,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const openAIKey = vscode.workspace.getConfiguration().get('commit-gpt.open-ai-key')
 
-  let disposableGenerateCommit = vscode.commands.registerCommand('commit-gpt.generateCommit', generateCommit())
+  let disposableGenerateCommit = vscode.commands.registerCommand('commit-gpt.generateCommit', generateCommit)
 
   let disposableSetOpenAIKey = vscode.commands.registerCommand('commit-gpt.setOpenAIKey', async () => {
     const key = await vscode.window.showInputBox({

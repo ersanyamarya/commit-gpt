@@ -1,38 +1,45 @@
 import * as cp from 'child_process'
+import OpenAI from 'openai'
 import * as vscode from 'vscode'
-
-export function generateCommit(): (...args: any[]) => any {
-  return async () => {
-    try {
-      if (!vscode.workspace.workspaceFolders?.length) {
-        return vscode.window.showWarningMessage('No workspace open')
+export async function generateCommit() {
+  const openAIKey = vscode.workspace.getConfiguration().get('commit-gpt.open-ai-key')
+  if (!openAIKey || openAIKey === '') {
+    return vscode.window.showWarningMessage('Please set your OpenAI API key', 'Set Key').then(value => {
+      if (value === 'Set Key') {
+        vscode.commands.executeCommand('commit-gpt.setOpenAIKey')
       }
+    })
+  }
+  try {
+    if (!vscode.workspace.workspaceFolders?.length) {
+      return vscode.window.showWarningMessage('No workspace open')
+    }
 
-      if (!vscode.workspace.workspaceFolders?.[0].uri.fsPath) {
-        return vscode.window.showWarningMessage('No workspace open')
-      }
+    if (!vscode.workspace.workspaceFolders?.[0].uri.fsPath) {
+      return vscode.window.showWarningMessage('No workspace open')
+    }
 
-      const gitStatus = await execShell(`
+    const gitStatus = await execShell(`
 cd ${vscode.workspace.workspaceFolders?.[0].uri.fsPath}
 git status
 `)
-      if (gitStatus.includes('nothing to commit, working tree clean')) {
-        return vscode.window.showWarningMessage('No changes to commit')
-      }
+    if (gitStatus.includes('nothing to commit, working tree clean')) {
+      return vscode.window.showWarningMessage('No changes to commit')
+    }
 
-      const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath
 
-      const filesChanged = await execShell(`
+    const filesChanged = await execShell(`
 cd ${workspaceRoot}
 files=$(git diff --name-only --cached | grep -vE '\(jpg|jpeg|png|gif|svg|lock.hcl|lock|tfstate|backup|schema.graphql|schema.json|types|.flutter*|gql.*|package-lock\.json)$')
 echo $files
 `)
 
-      if (filesChanged === `\n`) {
-        return vscode.window.showWarningMessage('No files changed, stage your changes and try again')
-      }
+    if (filesChanged === `\n`) {
+      return vscode.window.showWarningMessage('No files changed, stage your changes and try again')
+    }
 
-      const changes = await execShell(`
+    const changes = await execShell(`
 cd ${workspaceRoot}
 files=$(git diff --name-only --cached | grep -vE '\(jpg|jpeg|png|gif|svg|lock.hcl|lock|tfstate|backup|schema.graphql|schema.json|types|.flutter*|gql.*|package-lock\.json)$')
 return=""
@@ -43,7 +50,7 @@ done
 echo $return
 	  `)
 
-      const prompt = `Act as a software developer, compose a concise commit message adhering to the standard format. Craft a brief title summarizing the changes and provide succinct bulleted messages in Markdown for the following modifications. Please keep the output as concise as possible.:
+    const prompt = `Act as a software developer, compose a concise commit message adhering to the standard format. Craft a brief title summarizing the changes and provide succinct bulleted messages in Markdown for the following modifications. Please keep the output as concise as possible.:
 ${changes}
 Output Format:
 Commit Title[Without the text "Commit Title"]
@@ -54,18 +61,37 @@ Commit Title[Without the text "Commit Title"]
 ## Bug Fixes: [Only if there is relevant information]
 [Describe any bug fixes implemented in this commit.]
 `
-      await vscode.env.clipboard.writeText(prompt)
-      // set prompt as commit message
-      const gitExtension = vscode.extensions.getExtension('vscode.git')!.exports
-      const inputBox = gitExtension.getAPI(1).repositories[0].inputBox
-      inputBox.value = prompt
+    await vscode.env.clipboard.writeText(prompt)
+    const gitExtension = vscode.extensions.getExtension('vscode.git')!.exports
+    const inputBox = gitExtension.getAPI(1).repositories[0].inputBox
+    // inputBox.value = prompt
+    const openai = new OpenAI({
+      apiKey: openAIKey.toString(),
+    })
+    const gptResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.5,
+      top_p: 1,
+      max_tokens: 1024,
+    })
 
-      //   inputBox.show()
-    } catch (error: any) {
-      vscode.window.showErrorMessage(error.message)
-    }
+    inputBox.value = gptResponse.choices[0].message.content
+    console.log({ gptResponse })
+
+    vscode.window.showInformationMessage('Commit message generated')
+
+    //   inputBox.show()
+  } catch (error: any) {
+    vscode.window.showErrorMessage(error.message)
   }
 }
+
 const execShell = (cmd: string) =>
   new Promise<string>((resolve, reject) => {
     cp.exec(cmd, (err, out) => {
