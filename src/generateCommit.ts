@@ -46,7 +46,7 @@ echo $return
       const prompt = `Act as a software developer, compose a concise commit message adhering to the standard format. Craft a brief title summarizing the changes and provide succinct bulleted messages in Markdown for the following modifications. Please keep the output as concise as possible.:
 ${changes}
 Output Format:
-Commit Title
+Commit Title[Without the text "Commit Title"]
 ## Changes Made:
 [Summarize the changes made in this commit, including both features and bug fixes.]
 ## Features Added: [Only if there is relevant information]
