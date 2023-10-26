@@ -3,6 +3,8 @@
   "displayName": "Commit GPT",
   "description": "Generates commit messages using generative AI",
   "version": "0.0.1",
+  "publisher": "ersanyamarya",
+  "author": "Sanyam Arya <er.sanyam.arya@gmail.com>",
   "engines": {
     "vscode": "^1.83.0"
   },
@@ -10,6 +12,10 @@
     "Other"
   ],
   "activationEvents": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ersanyamarya/commit-gpt"
+  },
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
