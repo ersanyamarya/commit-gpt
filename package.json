@@ -1,8 +1,8 @@
 {
   "name": "commit-gpt",
   "displayName": "Commit GPT",
-  "description": "Generates commit messages using generative AI",
-  "version": "0.0.2",
+  "description": "Generates well formatted commit messages using generative AI",
+  "version": "0.0.3",
   "publisher": "ersanyamarya",
   "author": "Sanyam Arya <er.sanyam.arya@gmail.com>",
   "icon": "assets/images/logo.png",
@@ -28,10 +28,23 @@
   },
   "main": "./dist/extension.js",
   "contributes": {
+    "menus": {
+      "scm/title": [
+        {
+          "command": "commit-gpt.generateCommit",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "commit-gpt.generateCommit",
-        "title": "Commit GPT: Generate commit message"
+        "title": "Commit GPT: Generate commit message",
+        "icon": {
+          "dark": "assets/images/logo.png",
+          "light": "assets/images/logo.png"
+        }
       },
       {
         "command": "commit-gpt.setOpenAIKey",

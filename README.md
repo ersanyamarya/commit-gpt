@@ -2,6 +2,8 @@
 
 Commit GPT is a Visual Studio Code extension that generates commit messages using OpenAI's GPT (Generative Pre-trained Transformer) technology. It helps developers create descriptive and meaningful commit messages based on the staged changes in their Git repository.
 
+![Alt Text](/assets/images/usage-1.gif)
+
 ## Features
 
 - **Commit Message Generation**: Automatically generates commit messages based on the staged changes in your Git repository.

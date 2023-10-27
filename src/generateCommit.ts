@@ -31,14 +31,6 @@ export async function generateCommit() {
           return vscode.window.showWarningMessage('No workspace open')
         }
 
-        const gitStatus = await execShell(`
-cd ${vscode.workspace.workspaceFolders?.[0].uri.fsPath}
-git status
-`)
-        if (gitStatus.includes('nothing to commit, working tree clean')) {
-          return vscode.window.showWarningMessage('No changes to commit')
-        }
-
         const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath
         progress.report({ increment: 10, message: 'Generating git diff' })
         const filesChanged = await execShell(`
@@ -48,7 +40,9 @@ echo $files
 `)
 
         if (filesChanged === `\n`) {
-          return vscode.window.showWarningMessage('No files changed, stage your changes and try again')
+          progress.report({ increment: 100, message: 'No files changed' })
+          vscode.window.showWarningMessage('No files changed, stage your changes and try again')
+          return
         }
 
         const changes = await execShell(`
