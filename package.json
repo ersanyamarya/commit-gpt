@@ -2,14 +2,24 @@
   "name": "commit-gpt",
   "displayName": "Commit GPT",
   "description": "Generates commit messages using generative AI",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "ersanyamarya",
   "author": "Sanyam Arya <er.sanyam.arya@gmail.com>",
+  "icon": "assets/images/logo.png",
   "engines": {
     "vscode": "^1.83.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "SCM Providers"
+  ],
+  "keywords": [
+    "Commit",
+    "AI",
+    "ChatGPT",
+    "GPT",
+    "git",
+    "repository"
   ],
   "activationEvents": [],
   "repository": {
