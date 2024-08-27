@@ -56,17 +56,27 @@ done
 echo $return
 	  `)
         progress.report({ increment: 30, message: 'Generating prompt' })
-        const prompt = `Act as a software developer, compose a concise commit message adhering to the standard format. Craft a brief title summarizing the changes and provide succinct bulleted messages in Markdown for the following modifications. Please keep the output as concise as possible.:
+        const prompt = `As a software developer, your task is to create a clear and informative commit message that follows the standard format. Your message should include a concise title summarizing the changes, followed by detailed bullet points in Markdown format. Please ensure the output is as clear and concise as possible:
+
 ${changes}
+
 Output Format:
-Commit Title[Without the text "Commit Title"]
+- **Commit Title**: [Provide a brief and clear summary of the changes made]
+  
 ## Changes Made:
-[Summarize the changes made in this commit, including both features and bug fixes.]
-## Features Added: [Only if there is relevant information]
-[List any new features or enhancements introduced in this commit.]
-## Bug Fixes: [Only if there is relevant information]
-[Describe any bug fixes implemented in this commit.]
-`
+- [Summarize all changes made in this commit, including both features and bug fixes.]
+
+## Features Added: [Include this section only if applicable]
+- [List any new features or enhancements introduced in this commit.]
+
+## Bug Fixes: [Include this section only if applicable]
+- [Describe any bug fixes implemented in this commit.]
+
+## Additional Notes: [Include this section only if applicable]
+- [Add any other relevant information or context about the changes.]
+
+Ensure that each section is included only if there is relevant information to provide.`
+
         await vscode.env.clipboard.writeText(prompt)
         const gitExtension = vscode.extensions.getExtension('vscode.git')!.exports
         const inputBox = gitExtension.getAPI(1).repositories[0].inputBox
