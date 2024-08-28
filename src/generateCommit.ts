@@ -59,7 +59,7 @@ echo $return
         const prompt = `As a software developer, your task is to create a clear and informative commit message that follows the standard format. Your message should include a concise title summarizing the changes, followed by detailed bullet points in Markdown format. Please ensure the output is as clear and concise as possible.
 
 Output Format:
-- <Commit Title>: [Provide a brief and clear summary of the changes made] [This is required every time]
+<Commit Title>: [Provide a brief and clear summary of the changes made] [This is required every time]
   
 ## Features Added: [Include this section only if applicable]
 - [List any new features or enhancements introduced in this commit.]
