@@ -56,26 +56,25 @@ done
 echo $return
 	  `)
         progress.report({ increment: 30, message: 'Generating prompt' })
-        const prompt = `As a software developer, your task is to create a clear and informative commit message that follows the standard format. Your message should include a concise title summarizing the changes, followed by detailed bullet points in Markdown format. Please ensure the output is as clear and concise as possible:
-
-${changes}
+        const prompt = `As a software developer, your task is to create a clear and informative commit message that follows the standard format. Your message should include a concise title summarizing the changes, followed by detailed bullet points in Markdown format. Please ensure the output is as clear and concise as possible.
 
 Output Format:
-- **Commit Title**: [Provide a brief and clear summary of the changes made]
+- <Commit Title>: [Provide a brief and clear summary of the changes made] [This is required every time]
   
-## Changes Made:
-- [Summarize all changes made in this commit, including both features and bug fixes.]
-
 ## Features Added: [Include this section only if applicable]
 - [List any new features or enhancements introduced in this commit.]
 
 ## Bug Fixes: [Include this section only if applicable]
 - [Describe any bug fixes implemented in this commit.]
 
-## Additional Notes: [Include this section only if applicable]
-- [Add any other relevant information or context about the changes.]
+NOTE: Ensure that each section is included only if there is relevant information to provide.
 
-Ensure that each section is included only if there is relevant information to provide.`
+
+Here are the changes: 
+\`\`\`
+${changes}
+\`\`\`
+`
 
         await vscode.env.clipboard.writeText(prompt)
         const gitExtension = vscode.extensions.getExtension('vscode.git')!.exports
