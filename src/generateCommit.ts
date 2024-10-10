@@ -56,24 +56,44 @@ done
 echo $return
 	  `)
         progress.report({ increment: 30, message: 'Generating prompt' })
-        const prompt = `As a software developer, your task is to create a clear and informative commit message that follows the standard format. Your message should include a concise title summarizing the changes, followed by detailed bullet points in Markdown format. Please ensure the output is as clear and concise as possible.
+        const prompt = `As a software developer, your task is to Generate a concise, informative commit message using this format:
 
-Output Format:
-<Commit Title>: [Provide a brief and clear summary of the changes made] [This is required every time]
-  
-## Features Added: [Include this section only if applicable]
-- [List any new features or enhancements introduced in this commit.]
+<type>(<scope>): <subject>
 
-## Bug Fixes: [Include this section only if applicable]
-- [Describe any bug fixes implemented in this commit.]
+[optional body]
 
-NOTE: Ensure that each section is included only if there is relevant information to provide.
+[optional footer]
 
+Use the following input:
 
 Here are the changes: 
 \`\`\`
 ${changes}
 \`\`\`
+
+
+
+Guidelines:
+1. Type: Use one of these types (feat, fix, docs, style, refactor, test, chore).
+2. Scope: Specify the part of the codebase affected (e.g., component name, file name).
+3. Subject: Write a short, imperative mood description of the change.
+4. Body: Provide more detailed explanatory text, if necessary. Wrap at 72 characters.
+5. Footer: Reference any issue numbers or breaking changes.
+6. Keep the subject line under 50 characters.
+7. Use the imperative mood in the subject line (e.g., "Add" not "Added").
+8. Don't end the subject line with a period.
+9. Capitalize the subject line.
+10. Explain what and why in the body, not how (the code shows that).
+11. If breaking changes exist, start the footer with BREAKING CHANGE: followed by explanation.
+
+Example:
+feat(user-auth): Implement OAuth2 login
+
+- Add OAuth2 client configuration
+- Create login flow using Google provider
+- Update user model to store OAuth tokens
+
+Closes #123
 `
 
         await vscode.env.clipboard.writeText(prompt)

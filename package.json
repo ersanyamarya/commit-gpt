@@ -2,7 +2,7 @@
   "name": "commit-gpt",
   "displayName": "Commit GPT",
   "description": "Generates well formatted commit messages using generative AI",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "publisher": "ersanyamarya",
   "author": "Sanyam Arya <er.sanyam.arya@gmail.com>",
   "icon": "assets/images/logo.png",

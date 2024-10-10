@@ -28,6 +28,7 @@ Commit GPT is a Visual Studio Code extension that generates commit messages usin
 ## Usage
 
 1. **Set OpenAI API Key**:
+
    - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac).
    - Type `Commit GPT: Set OpenAI API Key` and press Enter.
    - Enter your OpenAI API key in the input box and press Enter to save it.
