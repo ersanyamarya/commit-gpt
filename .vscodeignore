@@ -1,5 +1,6 @@
 .vscode/**
 .vscode-test/**
+.claude/**
 out/**
 node_modules/**
 src/**
@@ -7,6 +8,11 @@ src/**
 .yarnrc
 webpack.config.js
 vsc-extension-quickstart.md
+CLAUDE.md
+package-lock.json
+eslint.config.js
+.prettierrc.js
+.prettierignore
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map
