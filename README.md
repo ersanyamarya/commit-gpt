@@ -1,20 +1,20 @@
 # Commit GPT - Visual Studio Code Extension
 
-Commit GPT is a Visual Studio Code extension that generates commit messages using OpenAI's GPT (Generative Pre-trained Transformer) technology. It helps developers create descriptive and meaningful commit messages based on the staged changes in their Git repository.
+Commit GPT is a Visual Studio Code extension that generates commit messages using your GitHub Copilot chat model access, via VS Code's Language Model API. It helps developers create descriptive and meaningful commit messages based on the staged changes in their Git repository.
 
 ![Alt Text](/assets/images/usage-1.gif)
 
 ## Features
 
 - **Commit Message Generation**: Automatically generates commit messages based on the staged changes in your Git repository.
-- **OpenAI Integration**: Utilizes OpenAI's API to generate human-like and context-aware commit messages.
-- **Customizable**: Allows users to set their OpenAI API key for personalized commit message generation.
-- **Easy to Use**: Simple commands to generate commit messages and set the OpenAI API key directly within VS Code.
+- **Copilot Integration**: Uses VS Code's Language Model API to generate human-like and context-aware commit messages via your GitHub Copilot access — no separate API key needed.
+- **Customizable**: Lets you choose which Copilot chat model family to use for generation.
+- **Easy to Use**: Simple commands to generate commit messages and select a chat model directly within VS Code.
 
 ## Requirements
 
-- Visual Studio Code (version 1.60.0 or higher)
-- OpenAI API Key (Get your API key from [OpenAI](https://www.openai.com/))
+- Visual Studio Code (version 1.91.0 or higher)
+- GitHub Copilot (installed and signed in) — Commit GPT generates messages via VS Code's Language Model API, using whichever Copilot chat model you have access to. No separate API key needed.
 
 ## Installation
 
@@ -23,15 +23,14 @@ Commit GPT is a Visual Studio Code extension that generates commit messages usin
 3. Go to Extensions (or press `Ctrl+Shift+X`).
 4. Search for "Commit GPT".
 5. Click **Install** to install the extension.
-6. Set your OpenAI API key using the `commit-gpt.setOpenAIKey` command (see Usage section below).
 
 ## Usage
 
-1. **Set OpenAI API Key**:
+1. **(Optional) Choose a chat model**:
 
    - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac).
-   - Type `Commit GPT: Set OpenAI API Key` and press Enter.
-   - Enter your OpenAI API key in the input box and press Enter to save it.
+   - Type `Commit GPT: Select Chat Model` and press Enter.
+   - Pick which Copilot chat model family to use from the list. If you skip this step, Commit GPT uses whichever Copilot model is available.
 
 2. **Generate Commit Message**:
    - Stage your changes in Git.
@@ -41,7 +40,7 @@ Commit GPT is a Visual Studio Code extension that generates commit messages usin
 
 ## Configuration
 
-- **`commit-gpt.open-ai-key`**: Your OpenAI API key. You can set this using the `commit-gpt.setOpenAIKey` command or directly in your VS Code settings.
+- **`commit-gpt.model`**: The Copilot chat model family used to generate commit messages. Set this using the `commit-gpt.selectModel` command or directly in your VS Code settings.
 
 ## Known Issues
 

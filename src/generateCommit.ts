@@ -1,15 +1,6 @@
 import * as cp from 'child_process'
-import OpenAI from 'openai'
 import * as vscode from 'vscode'
 export async function generateCommit() {
-  const openAIKey = vscode.workspace.getConfiguration().get('commit-gpt.open-ai-key')
-  if (!openAIKey || openAIKey === '') {
-    return vscode.window.showWarningMessage('Please set your OpenAI API key', 'Set Key').then(value => {
-      if (value === 'Set Key') {
-        vscode.commands.executeCommand('commit-gpt.setOpenAIKey')
-      }
-    })
-  }
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
@@ -35,7 +26,7 @@ export async function generateCommit() {
         progress.report({ increment: 10, message: 'Generating git diff' })
         const filesChanged = await execShell(`
 cd ${workspaceRoot}
-files=$(git diff --name-only --cached | grep -vE '\(jpg|jpeg|png|gif|svg|lock.hcl|lock|tfstate|backup|schema.graphql|schema.json|types|.flutter*|gql.*|package-lock\.json)$')
+files=$(git diff --name-only --cached | grep -vE '(jpg|jpeg|png|gif|svg|lock\.hcl|lock|tfstate|backup|schema\.graphql|schema\.json|types|\.flutter*|gql.*|package-lock\.json)$')
 echo $files
 `)
 
@@ -47,16 +38,18 @@ echo $files
 
         const changes = await execShell(`
 cd ${workspaceRoot}
-files=$(git diff --name-only --cached | grep -vE '\(jpg|jpeg|png|gif|svg|lock.hcl|lock|tfstate|backup|schema.graphql|schema.json|types|.flutter*|gql.*|package-lock\.json)$')
+files=$(git diff --name-only --cached | grep -vE '(jpg|jpeg|png|gif|svg|lock\.hcl|lock|tfstate|backup|schema\.graphql|schema\.json|types|\.flutter*|gql.*|package-lock\.json)$')
 return=""
 for file in $files; do
-changes=$(git diff --cached $file | grep '^[+-]' | grep -v '^[+-]\{3\}')
-return="$return- $file:\n$changes"
+changes=$(git diff --cached "$file" | grep '^[+-]' | grep -v '^[+-]\{3\}')
+return="$return
+- $file:
+$changes"
 done
-echo $return
-	  `)
+echo "$return"
+`)
         progress.report({ increment: 30, message: 'Generating prompt' })
-        const prompt = `As a software developer, your task is to Generate a concise, informative commit message using this format:
+        const prompt = `As a software developer, your task is to generate a concise, informative commit message using this format:
 
 <type>(<scope>): <subject>
 
@@ -66,25 +59,21 @@ echo $return
 
 Use the following input:
 
-Here are the changes: 
+Here are the changes:
 \`\`\`
 ${changes}
 \`\`\`
 
-
-
 Guidelines:
 1. Type: Use one of these types (feat, fix, docs, style, refactor, test, chore).
 2. Scope: Specify the part of the codebase affected (e.g., component name, file name).
-3. Subject: Write a short, imperative mood description of the change.
-4. Body: Provide more detailed explanatory text, if necessary. Wrap at 72 characters.
-5. Footer: Reference any issue numbers or breaking changes.
-6. Keep the subject line under 50 characters.
-7. Use the imperative mood in the subject line (e.g., "Add" not "Added").
-8. Don't end the subject line with a period.
-9. Capitalize the subject line.
-10. Explain what and why in the body, not how (the code shows that).
-11. If breaking changes exist, start the footer with BREAKING CHANGE: followed by explanation.
+3. Subject: Write a short, imperative-mood description of the change (e.g., "Add" not "Added").
+4. Body: Provide more detailed explanatory text, if necessary. Wrap at 72 characters. Explain what and why, not how (the code shows that).
+5. Footer: Only include this if genuinely applicable - reference real issue numbers or breaking changes. Omit it entirely otherwise; never fabricate an issue number.
+6. Keep the entire first line (\`type(scope): subject\`) under 50 characters.
+7. Don't end the subject line with a period.
+8. Capitalize the subject line.
+9. If breaking changes exist, start the footer with BREAKING CHANGE: followed by explanation.
 
 Example:
 feat(user-auth): Implement OAuth2 login
@@ -93,7 +82,7 @@ feat(user-auth): Implement OAuth2 login
 - Create login flow using Google provider
 - Update user model to store OAuth tokens
 
-Closes #123
+Respond with only the commit message text - no preamble, no explanation, and no Markdown code fences.
 `
 
         await vscode.env.clipboard.writeText(prompt)
@@ -101,23 +90,32 @@ Closes #123
         const inputBox = gitExtension.getAPI(1).repositories[0].inputBox
         // inputBox.value = prompt
         progress.report({ increment: 50, message: 'Generating commit message' })
-        const openai = new OpenAI({
-          apiKey: openAIKey.toString(),
-        })
-        const gptResponse = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          temperature: 0.5,
-          top_p: 1,
-          max_tokens: 1024,
-        })
 
-        inputBox.value = gptResponse.choices[0].message.content
+        const configuredFamily = vscode.workspace.getConfiguration().get<string>('commit-gpt.model')
+        let models = configuredFamily ? await vscode.lm.selectChatModels({ vendor: 'copilot', family: configuredFamily }) : []
+        if (models.length === 0) {
+          models = await vscode.lm.selectChatModels({ vendor: 'copilot' })
+        }
+        if (models.length === 0) {
+          return vscode.window.showWarningMessage(
+            'No Copilot chat models available. Make sure GitHub Copilot is installed and you are signed in.'
+          )
+        }
+
+        const messages = [vscode.LanguageModelChatMessage.User(prompt)]
+        try {
+          const chatResponse = await models[0].sendRequest(messages, {}, token)
+          let responseText = ''
+          for await (const fragment of chatResponse.text) {
+            responseText += fragment
+          }
+          inputBox.value = responseText
+        } catch (err) {
+          if (err instanceof vscode.LanguageModelError) {
+            return vscode.window.showErrorMessage(`Commit GPT: ${err.message}`)
+          }
+          throw err
+        }
 
         progress.report({ increment: 100, message: 'Commit message generated' })
         return

@@ -7,7 +7,7 @@
   "author": "Sanyam Arya <er.sanyam.arya@gmail.com>",
   "icon": "assets/images/logo.png",
   "engines": {
-    "vscode": "^1.83.0"
+    "vscode": "^1.91.0"
   },
   "categories": [
     "Other",
@@ -47,17 +47,17 @@
         }
       },
       {
-        "command": "commit-gpt.setOpenAIKey",
-        "title": "Commit GPT: Set OpenAI API key"
+        "command": "commit-gpt.selectModel",
+        "title": "Commit GPT: Select Chat Model"
       }
     ],
     "configuration": {
       "title": "Commit GPT",
       "properties": {
-        "commit-gpt.open-ai-key": {
+        "commit-gpt.model": {
           "type": "string",
           "default": "",
-          "description": "OpenAI API key"
+          "description": "The Copilot chat model family used to generate commit messages, set via the \"Commit GPT: Select Chat Model\" command. Falls back to any available Copilot model if unset."
         }
       }
     }
@@ -70,27 +70,24 @@
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src/**/*.ts",
     "format": "prettier --write \"**/*.{ts,js,jsx,tsx,json,md,graphql,yml,yaml}\"",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.2",
-    "@types/node": "18.x",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
     "@types/vscode": "^1.83.0",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
-    "@vscode/test-electron": "^2.3.4",
-    "eslint": "^8.50.0",
-    "glob": "^10.3.3",
-    "mocha": "^10.2.0",
-    "prettier-plugin-organize-imports": "^3.2.3",
-    "ts-loader": "^9.4.4",
-    "typescript": "^5.2.2",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {
-    "openai": "^4.14.0"
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "@vscode/test-electron": "^3.1.0",
+    "eslint": "^9.39.1",
+    "glob": "^11.0.3",
+    "mocha": "^12.0.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "ts-loader": "^9.6.2",
+    "typescript": "^5.9.3",
+    "webpack": "^5.110.3",
+    "webpack-cli": "^6.0.1"
   }
 }
