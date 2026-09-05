@@ -14,15 +14,12 @@ export async function generateCommit() {
       progress.report({ increment: 0, message: 'Checking git status' })
 
       try {
-        if (!vscode.workspace.workspaceFolders?.length) {
+        const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath
+
+        if (!workspaceRoot) {
           return vscode.window.showWarningMessage('No workspace open')
         }
 
-        if (!vscode.workspace.workspaceFolders?.[0].uri.fsPath) {
-          return vscode.window.showWarningMessage('No workspace open')
-        }
-
-        const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath
         progress.report({ increment: 10, message: 'Generating git diff' })
         const filesChanged = await execShell(`
 cd ${workspaceRoot}
@@ -92,7 +89,9 @@ Respond with only the commit message text - no preamble, no explanation, and no 
         progress.report({ increment: 50, message: 'Generating commit message' })
 
         const configuredFamily = vscode.workspace.getConfiguration().get<string>('commit-gpt.model')
-        let models = configuredFamily ? await vscode.lm.selectChatModels({ vendor: 'copilot', family: configuredFamily }) : []
+        let models = configuredFamily
+          ? await vscode.lm.selectChatModels({ vendor: 'copilot', family: configuredFamily })
+          : []
         if (models.length === 0) {
           models = await vscode.lm.selectChatModels({ vendor: 'copilot' })
         }
