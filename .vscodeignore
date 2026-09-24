@@ -17,3 +17,10 @@ eslint.config.js
 **/.eslintrc.json
 **/*.map
 **/*.ts
+.mcp.json
+.ignore
+.fallowrc.json
+.fallow/**
+graft/**
+test/**
+*.vsix

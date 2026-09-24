@@ -8,7 +8,25 @@
     "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/graft-statusline.cjs\""
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook vscode-copilot pretooluse"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook vscode-copilot posttooluse"
+          }
+        ]
+      },
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
@@ -46,6 +64,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "context-mode hook vscode-copilot sessionstart"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/graft-hooks.cjs\" session-start",
             "timeout": 8000
           }
@@ -64,15 +90,8 @@
       }
     ]
   },
-  "footerLinksRegexes": [
-    "graft/[\\w./-]+\\.md"
-  ],
+  "footerLinksRegexes": ["graft/[\\w./-]+\\.md"],
   "permissions": {
-    "allow": [
-      "Bash(graft:*)",
-      "Bash(npx graft:*)",
-      "Bash(graft-dev:*)",
-      "Bash(node dist/cli.js:*)"
-    ]
+    "allow": ["Bash(graft:*)", "Bash(npx graft:*)", "Bash(graft-dev:*)", "Bash(node dist/cli.js:*)"]
   }
 }

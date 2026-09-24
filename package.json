@@ -16,10 +16,10 @@
   "keywords": [
     "Commit",
     "AI",
-    "ChatGPT",
-    "GPT",
     "git",
-    "repository"
+    "repository",
+    "Copilot",
+    "Conventional Commits"
   ],
   "activationEvents": [],
   "repository": {
@@ -70,18 +70,26 @@
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"**/*.{ts,js,jsx,tsx,json,md,graphql,yml,yaml}\"",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "vsce:login": "vsce login ersanyamarya",
+    "vsce:ls": "vsce ls --no-dependencies",
+    "vsce:package": "vsce package --no-dependencies",
+    "vsce:install-local": "vsce package --no-dependencies -o commit-gpt.vsix && code --install-extension commit-gpt.vsix --force",
+    "release:patch": "npm test && vsce publish --no-dependencies -m \"chore(release): Bump version to %s\" patch && git push --follow-tags",
+    "release:minor": "npm test && vsce publish --no-dependencies -m \"chore(release): Bump version to %s\" minor && git push --follow-tags",
+    "release:major": "npm test && vsce publish --no-dependencies -m \"chore(release): Bump version to %s\" major && git push --follow-tags"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.19.43",
     "@types/sinon": "^22.0.0",
-    "@types/vscode": "^1.83.0",
+    "@types/vscode": "~1.91.0",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.69.0",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
     "eslint": "^9.39.1",
     "glob": "^11.0.3",
     "mocha": "^12.0.0",
